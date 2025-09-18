@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flipkart Big Billion Days - Mystery Box Game</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #2874f0, #0d47a1);
+            color: #333;
+            min-height: 100vh;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        header {
+            padding: 12px 0;
+            background: linear-gradient(to right, #2874f0, #0d47a1);
+            margin: -15px -15px 15px;
+            border-radius: 15px 15px 0 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        h1 {
+            color: white;
+            font-size: 1.8rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 5px;
+        }
+        
+        .subtitle {
+            color: #ff9f00;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .attempts {
+            font-size: 1rem;
+            margin: 8px 0;
+            color: #ff9f00;
+            font-weight: bold;
+        }
+        
+        .ad-container {
+            width: 100%;
+            margin: 12px 0;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .ad-banner {
+            width: 100%;
+            max-width: 468px;
+            height: 60px;
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 8px 0;
+            overflow: hidden;
+        }
+        
+        .ad-label {
+            font-size: 0.7rem;
+            color: #888;
+            margin-bottom: 4px;
+        }
+        
+        .boxes-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .box {
+            aspect-ratio: 1;
+            background: linear-gradient(145deg, #2874f0, #0d47a1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .box i {
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .box.opened {
+            background: linear-gradient(145deg, #ff9f00, #ff5722);
+        }
+        
+        .box.opened i {
+            display: none;
+        }
+        
+        .reward {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+        }
+        
+        .reward img {
+            width: 55%;
+            height: auto;
+            object-fit: contain;
+        }
+        
+        .reward-name {
+            font-size: 0.6rem;
+            font-weight: bold;
+            margin-top: 4px;
+            color: #333;
+        }
+        
+        .result-container {
+            margin: 15px 0;
+            padding: 12px;
+            border-radius: 8px;
+            background: #f8f8f8;
+            display: none;
+            border: 2px solid #2874f0;
+        }
+        
+        .result-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .result-image {
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+        }
+        
+        .result-text {
+            text-align: left;
+        }
+        
+        .result-text h3 {
+            color: #2874f0;
+            margin-bottom: 4px;
+            font-size: 1.1rem;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            background: linear-gradient(to right, #2874f0, #0d47a1);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 8px 4px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 116, 240, 0.4);
+        }
+        
+        .btn-orange {
+            background: linear-gradient(to right, #ff9f00, #ff5722);
+        }
+        
+        .name-input-container, .share-container, .success-container {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 8px;
+            background: #f8f8f8;
+            display: none;
+            border: 2px solid #2874f0;
+        }
+        
+        input {
+            padding: 10px;
+            width: 100%;
+            max-width: 280px;
+            border: 2px solid #2874f0;
+            border-radius: 50px;
+            margin: 8px 0;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        
+        .progress-container {
+            width: 100%;
+            max-width: 450px;
+            margin: 15px auto;
+            background: #e0e0e0;
+            height: 18px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, #2874f0, #0d47a1);
+            width: 0%;
+            transition: width 0.5s;
+            border-radius: 10px;
+        }
+        
+        .share-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 12px 0;
+        }
+        
+        .share-btn {
+            padding: 8px 16px;
+            background: #25D366;
+            color: white;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .success-container {
+            background: linear-gradient(145deg, #2874f0, #0d47a1);
+            color: white;
+        }
+        
+        .success-container h2 {
+            margin-bottom: 12px;
+            font-size: 1.3rem;
+        }
+        
+        .detail-form {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        
+        .detail-form input {
+            width: 100%;
+            max-width: none;
+            border: 2px solid #ff9f00;
+        }
+        
+        .flipkart-logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 8px;
+        }
+        
+        .flipkart-logo span {
+            color: #ff9f00;
+        }
+        
+        .ad-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .ad-popup-content {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            max-width: 90%;
+            width: 350px;
+        }
+        
+        .ad-popup-close {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #ff0000;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        
+        .smartlink-ads {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin: 12px 0;
+        }
+        
+        .smartlink-ad {
+            padding: 8px 12px;
+            background: linear-gradient(to right, #2874f0, #0d47a1);
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: transform 0.2s;
+            text-align: center;
+        }
+        
+        .smartlink-ad:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 116, 240, 0.4);
+        }
+        
+        .social-bar-ad {
+            width: 100%;
+            margin: 15px 0;
+            min-height: 80px;
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .native-banner-ad {
+            width: 100%;
+            margin: 15px 0;
+            min-height: 250px;
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        @media (max-width: 768px) {
+            .boxes-container {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .ad-banner {
+                height: 60px;
+            }
+            
+            .smartlink-ads {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .boxes-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .flipkart-logo {
+                font-size: 1.8rem;
+            }
+            
+            h1 {
+                font-size: 1.4rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .ad-banner {
+                height: 50px;
+            }
+            
+            .result-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .result-text {
+                text-align: center;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            .boxes-container {
+                gap: 8px;
+            }
+            
+            .box i {
+                font-size: 1.2rem;
+            }
+            
+            .reward img {
+                width: 50%;
+            }
+            
+            .reward-name {
+                font-size: 0.55rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="flipkart-logo">Flipkart<span>.</span></div>
+                <h1>THE BIG BILLION DAYS</h1>
+                <div class="subtitle">Mystery Box Bonanza</div>
+                <div class="attempts">Attempts Left: <span id="attempts-count">3</span></div>
+            </div>
+        </header>
+        
+        <!-- Banner Ad -->
+        <div class="ad-container">
+            <div>
+                <div class="ad-label">Advertisement</div>
+                <div class="ad-banner" id="banner-ad">
+                    <!-- Banner ad will be loaded here -->
+                    <div style="color: #888; font-size: 12px;">Loading advertisement...</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="boxes-container" id="boxes-container">
+            <!-- Boxes will be generated by JavaScript -->
+        </div>
+        
+        <!-- Native Banner Ad -->
+        <div class="ad-container">
+            <div>
+                <div class="ad-label">Sponsored</div>
+                <div class="native-banner-ad" id="native-banner-ad">
+                    <!-- Native banner ad will be loaded here -->
+                    <div style="color: #888; font-size: 12px;">Loading native ad...</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Smartlink Ads -->
+        <div class="ad-container">
+            <div>
+                <div class="ad-label">Special Offers</div>
+                <div class="smartlink-ads">
+                    <a href="https://www.revenuecpmgate.com/w7p5tgqmhr?key=a38e1bc8070f6204c80574e8dd73a95c" target="_blank" class="smartlink-ad">Special Offer #1</a>
+                    <a href="https://www.revenuecpmgate.com/vxk866nm?key=0278f4d03bfa6a8bfb7ca074ab463914" target="_blank" class="smartlink-ad">Special Offer #2</a>
+                    <a href="https://www.revenuecpmgate.com/zcugc6k1i?key=415c7f0a03b86d9f101e36c7049ac954" target="_blank" class="smartlink-ad">Special Offer #3</a>
+                    <a href="https://www.revenuecpmgate.com/gbc810mys?key=08565971873399d3133fcc49d271a2e6" target="_blank" class="smartlink-ad">Special Offer #4</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Social Bar Ad -->
+        <div class="ad-container">
+            <div>
+                <div class="ad-label">Sponsored</div>
+                <div class="social-bar-ad" id="social-bar-ad">
+                    <!-- Social bar ad will be loaded here -->
+                    <div style="color: #888; font-size: 12px;">Loading social bar...</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="result-container" id="result-container">
+            <div class="result-content">
+                <img src="" alt="Reward" class="result-image" id="result-image">
+                <div class="result-text">
+                    <h3 id="reward-title">Congratulations!</h3>
+                    <p>You won: <span id="reward-name">iPhone 16 Pro</span></p>
+                </div>
+            </div>
+            <button class="btn btn-orange" id="claim-btn">Claim Now</button>
+        </div>
+        
+        <div class="name-input-container" id="name-input-container">
+            <h2>Enter Your Name</h2>
+            <input type="text" id="name-input" placeholder="Your Full Name">
+            <button class="btn" id="name-submit">Next</button>
+        </div>
+        
+        <div class="share-container" id="share-container">
+            <h2>Share with 20 Friends</h2>
+            <p>Share on WhatsApp to complete your claim</p>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <p id="progress-text">0/20 Shared</p>
+            <div class="share-buttons">
+                <div class="share-btn" id="whatsapp-share">
+                    <i class="fab fa-whatsapp"></i>
+                    Share on WhatsApp
+                </div>
+            </div>
+        </div>
+        
+        <div class="success-container" id="success-container">
+            <h2>Congratulations!</h2>
+            <p>Your claim is being processed</p>
+            <div class="detail-form">
+                <input type="text" placeholder="Full Name">
+                <input type="text" placeholder="Phone Number">
+                <input type="email" placeholder="Email Address">
+                <input type="text" placeholder="Shipping Address">
+                <input type="text" placeholder="City">
+                <input type="text" placeholder="Postal Code">
+            </div>
+            <button class="btn btn-orange" id="submit-details">Submit Details</button>
+        </div>
+    </div>
+    
+    <!-- Ad Popup -->
+    <div class="ad-popup" id="ad-popup">
+        <div class="ad-popup-content">
+            <div class="ad-popup-close" id="ad-popup-close">X</div>
+            <h3>Special Offer!</h3>
+            <p>Check out this amazing deal just for you!</p>
+            <div class="ad-banner">
+                <!-- Direct link ad content will be loaded here -->
+                <div style="padding: 15px; text-align: center;">
+                    <p>Exciting offers await!</p>
+                    <a href="https://www.revenuecpmgate.com/w7p5tgqmhr?key=a38e1bc8070f6204c80574e8dd73a95c" target="_blank" class="btn btn-orange">View Offer</a>
+                </div>
+            </div>
+            <p style="margin-top: 12px; font-size: 12px;">Your reward will be revealed after closing this ad</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const boxesContainer = document.getElementById('boxes-container');
+            const attemptsCount = document.getElementById('attempts-count');
+            const resultContainer = document.getElementById('result-container');
+            const resultImage = document.getElementById('result-image');
+            const rewardName = document.getElementById('reward-name');
+            const rewardTitle = document.getElementById('reward-title');
+            const claimBtn = document.getElementById('claim-btn');
+            const nameInputContainer = document.getElementById('name-input-container');
+            const nameInput = document.getElementById('name-input');
+            const nameSubmit = document.getElementById('name-submit');
+            const shareContainer = document.getElementById('share-container');
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            const whatsappShare = document.getElementById('whatsapp-share');
+            const successContainer = document.getElementById('success-container');
+            const submitDetails = document.getElementById('submit-details');
+            const adPopup = document.getElementById('ad-popup');
+            const adPopupClose = document.getElementById('ad-popup-close');
+            
+            // Game state
+            let attempts = 3;
+            let currentReward = null;
+            let sharedCount = 0;
+            let currentBoxIndex = null;
+            let adShownForThisBox = false;
+            
+            // Rewards list with real product images
+            const rewards = [
+                { name: "iPhone 16 Pro", image: "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-16-pro-finish-select-202409-6-7inch-blue-titanium?wid=2560&hei=1440&fmt=p-jpg&qlt=80&.v=1724873315893" },
+                { name: "Samsung 75\" QLED TV", image: "https://images.samsung.com/is/image/samsung/p6pim/in/qa75q80akxxl/gallery/in-qled-tv-qa75q80akxxl-qa75q80akxxl-538223922?$650_519_PNG$" },
+                { name: "Apple Watch Series 9", image: "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/MUAH3ref_VW_PF+watch-49-titanium-ultra2_VW_PF_WF_SI?wid=2560&hei=1440&fmt=p-jpg&qlt=80&.v=1694604561806" },
+                { name: "Sony PlayStation 5", image: "https://cdn-dynmedia-1.microsoft.com/is/image/microsoftcorp/CFI-1214A_PS5-Slim-1?wid=406&hei=233&fit=crop" },
+                { name: "Bose Headphones 700", image: "https://assets.bose.com/content/dam/cloudassets/Bose_DAM/Web/consumer_electronics/global/products/headphones/noise_cancelling_headphones_700/product_silo_images/noise_cancelling_headphones_700_black_EC_hero_1x1.jpg/jcr:content/renditions/cq5dam.web.1000.1000.jpeg" },
+                { name: "MacBook Pro 16\"", image: "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/mbp16-silver-select-202301?wid=452&hei=420&fmt=jpeg&qlt=90&.v=1671304673223" },
+                { name: "Nintendo Switch OLED", image: "https://cdn-dynmedia-1.microsoft.com/is/image/microsoftcorp/Product-Card-01-Switch-OLED?wid=406&hei=233&fit=crop" },
+                { name: "Dyson Airwrap", image: "https://www.dyson.com/-/media/dyson/main-site/heroes/airwrap/airwrap-main-hero-prussian-blue-rhs-1440x1440.png" },
+                { name: "Canon EOS R5", image: "https://cdn-4.nikon-cdn.com/e/Q5NM96RZZo-YRYNeYvAi9beHK4x3L-8u1FTm7uVgZgNZvGX-kAPq9ggX5__-2nwD6SvS5w==/Views/2190_D3x_Angled.png" },
+                { name: "Xbox Series X", image: "https://cdn-dynmedia-1.microsoft.com/is/image/microsoftcorp/Content-Card-Xbox-Series-X?wid=406&hei=233&fit=crop" },
+                { name: "iPad Pro 12.9\"", image: "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/ipad-pro-finish-select-202212-12-9inch-space-gray-wifi_FMT_WHH?wid=500&hei=500&fmt=jpeg&qlt=90&.v=1671143321218" },
+                { name: "Samsung Galaxy Z Fold5", image: "https://images.samsung.com/is/image/samsung/p6pim/in/sm-f946blbgins/gallery/in-galaxy-z-fold5-sm-f946blbgins-536741917?$650_519_PNG$" },
+                { name: "AirPods Max", image: "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/airpods-max-hero-select-202011_FMT_WHH?wid=607&hei=556&fmt=jpeg&qlt=90&.v=1633623988000" },
+                { name: "DJI Mavic 3 Pro", image: "https://www.dji.com/-/media/dji/images/home/product/mavic-3-pro/mavic-3-pro-1.png" },
+                { name: "Kindle Oasis", image: "https://m.media-amazon.com/images/I/61N+QPWbVxL._AC_SX466_.jpg" },
+                { name: "GoPro Hero 12", image: "https://cb.scene7.com/is/image/Crate/GoProHERO12Black_Front_01/$web_pdp_main_carousel_med$/230914122305/gopro-hero12-black.jpg" },
+                { name: "Nespresso VertuoPlus", image: "https://www.nespresso.com/ecom/medias/sys_master/public/27955503185950/1200by1200-VertuoPlus-Deluxe-Titan-Front.png" },
+                { name: "Fitbit Sense 2", image: "https://i.ebayimg.com/images/g/9~sAAOSw~b1kUfVt/s-l1200.jpg" },
+                { name: "Amazon Echo Studio", image: "https://m.media-amazon.com/images/I/71lucOO--oL._AC_SX466_.jpg" },
+                { name: "₹10,000 Gift Card", image: "https://www.pngmart.com/files/22/Gift-Card-PNG-Isolated-HD.png" }
+            ];
+            
+            // Load banner ads
+            function loadBannerAds() {
+                // Banner ad
+                var bannerAd1 = document.createElement('script');
+                bannerAd1.type = 'text/javascript';
+                bannerAd1.innerHTML = `
+                    atOptions = {
+                        'key' : '4f60b93757f98b7140a09b353470a4d8',
+                        'format' : 'iframe',
+                        'height' : 60,
+                        'width' : 468,
+                        'params' : {}
+                    };
+                `;
+                document.getElementById('banner-ad').appendChild(bannerAd1);
+                
+                var bannerAd1Script = document.createElement('script');
+                bannerAd1Script.type = 'text/javascript';
+                bannerAd1Script.src = '//www.highperformanceformat.com/4f60b93757f98b7140a09b353470a4d8/invoke.js';
+                document.getElementById('banner-ad').appendChild(bannerAd1Script);
+            }
+            
+            // Load native banner ad
+            function loadNativeBannerAd() {
+                var nativeBannerAdScript = document.createElement('script');
+                nativeBannerAdScript.async = true;
+                nativeBannerAdScript.setAttribute('data-cfasync', 'false');
+                nativeBannerAdScript.src = '//pl27674078.revenuecpmgate.com/412bffbfe299f27891b53e55b5ee924d/invoke.js';
+                document.getElementById('native-banner-ad').appendChild(nativeBannerAdScript);
+                
+                var nativeBannerAdContainer = document.createElement('div');
+                nativeBannerAdContainer.id = 'container-412bffbfe299f27891b53e55b5ee924d';
+                document.getElementById('native-banner-ad').appendChild(nativeBannerAdContainer);
+            }
+            
+            // Load social bar ad
+            function loadSocialBarAd() {
+                var socialBarAdScript = document.createElement('script');
+                socialBarAdScript.type = 'text/javascript';
+                socialBarAdScript.src = '//pl27674067.revenuecpmgate.com/f3/e1/0a/f3e10a8955cf295ca06e0f6e1823dbc2.js';
+                document.getElementById('social-bar-ad').appendChild(socialBarAdScript);
+            }
+            
+            // Initialize boxes
+            function initializeBoxes() {
+                boxesContainer.innerHTML = '';
+                for (let i = 0; i < 20; i++) {
+                    const box = document.createElement('div');
+                    box.className = 'box';
+                    box.innerHTML = '<i class="fas fa-gift"></i>';
+                    box.addEventListener('click', () => openBox(i));
+                    boxesContainer.appendChild(box);
+                }
+            }
+            
+            // Open box function
+            function openBox(index) {
+                if (attempts <= 0) return;
+                if (document.querySelectorAll('.box')[index].classList.contains('opened')) return;
+                
+                attempts--;
+                attemptsCount.textContent = attempts;
+                
+                currentBoxIndex = index;
+                const box = document.querySelectorAll('.box')[index];
+                
+                // Show ad 50% of the time on first click, but not if already shown for this box
+                if (Math.random() < 0.5 && !adShownForThisBox) {
+                    adShownForThisBox = true;
+                    adPopup.style.display = 'flex';
+                    return;
+                }
+                
+                // If no ad to show or ad already shown, proceed to reveal reward
+                revealReward(box);
+            }
+            
+            // Reveal reward function
+            function revealReward(box) {
+                box.classList.add('opened');
+                
+                // Select a random reward
+                const rewardIndex = Math.floor(Math.random() * rewards.length);
+                currentReward = rewards[rewardIndex];
+                
+                // Display reward in box
+                box.innerHTML = `
+                    <div class="reward">
+                        <img src="${currentReward.image}" alt="${currentReward.name}">
+                        <div class="reward-name">${currentReward.name}</div>
+                    </div>
+                `;
+                
+                // Show result after a short delay
+                setTimeout(() => {
+                    resultContainer.style.display = 'block';
+                    resultImage.src = currentReward.image;
+                    rewardName.textContent = currentReward.name;
+                    rewardTitle.textContent = attempts >= 0 ? 'Congratulations!' : 'Game Over';
+                }, 500);
+                
+                // Reset ad flag for next box
+                adShownForThisBox = false;
+            }
+            
+            // Claim button event
+            claimBtn.addEventListener('click', function() {
+                resultContainer.style.display = 'none';
+                nameInputContainer.style.display = 'block';
+            });
+            
+            // Name submit event
+            nameSubmit.addEventListener('click', function() {
+                if (nameInput.value.trim() === '') {
+                    alert('Please enter your name');
+                    return;
+                }
+                
+                nameInputContainer.style.display = 'none';
+                shareContainer.style.display = 'block';
+            });
+            
+            // WhatsApp share event
+            whatsappShare.addEventListener('click', function() {
+                const shareText = `I just won ${currentReward.name} in the Flipkart Big Billion Days Mystery Box game! Try your luck too!`;
+                const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+                
+                // Open WhatsApp share in a new window
+                window.open(whatsappUrl, '_blank');
+                
+                // Simulate sharing progress
+                simulateSharingProgress();
+            });
+            
+            // Simulate sharing progress
+            function simulateSharingProgress() {
+                if (sharedCount >= 20) return;
+                
+                sharedCount++;
+                
+                // Update progress
+                const progressPercent = (sharedCount / 20) * 100;
+                progressBar.style.width = progressPercent + '%';
+                progressText.textContent = `${sharedCount}/20 Shared`;
+                
+                // If sharing completed
+                if (sharedCount >= 20) {
+                    setTimeout(() => {
+                        shareContainer.style.display = 'none';
+                        successContainer.style.display = 'block';
+                    }, 800);
+                }
+            }
+            
+            // Submit details event
+            submitDetails.addEventListener('click', function() {
+                alert('Details submitted successfully! Your reward will be delivered soon.');
+                // Reset the game
+                resetGame();
+            });
+            
+            // Reset game function
+            function resetGame() {
+                attempts = 3;
+                attemptsCount.textContent = attempts;
+                sharedCount = 0;
+                progressBar.style.width = '0%';
+                progressText.textContent = '0/20 Shared';
+                nameInput.value = '';
+                
+                resultContainer.style.display = 'none';
+                successContainer.style.display = 'none';
+                
+                initializeBoxes();
+            }
+            
+            // Close ad popup and reveal reward
+            adPopupClose.addEventListener('click', function() {
+                adPopup.style.display = 'none';
+                if (currentBoxIndex !== null) {
+                    const box = document.querySelectorAll('.box')[currentBoxIndex];
+                    revealReward(box);
+                }
+            });
+            
+            // Initialize the game
+            initializeBoxes();
+            loadBannerAds();
+            loadNativeBannerAd();
+            loadSocialBarAd();
+        });
+    </script>
+</body>
+</html>
